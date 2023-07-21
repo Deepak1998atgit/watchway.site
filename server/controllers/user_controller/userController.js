@@ -889,7 +889,8 @@ exports.getProceedToCheckout = async (req, res) => {
             walletAmount = walletDetail.amount;
         }
         const address = user.address.id(addressId);
-        res.render("proceedToCheckOut", { user: user, cartProducts, address, couponDetail, payable, message, walletAmount, wallet, CartLength });
+        // proceedToCheckOut
+        res.render("proceedToCheckout", { user: user, cartProducts, address, couponDetail, payable, message, walletAmount, wallet, CartLength });
         console.log(address);
     } catch (error) {
         console.error('Error placing order:', error);
