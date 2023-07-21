@@ -4,7 +4,7 @@ const path=require("path");
 const session=require('express-session');
 const cookieParser = require("cookie-parser"); // Include the cookie-parser
 const app=express();
-const killPort=require("kill-port");
+
 const paypal=require('paypal-rest-sdk');
 const PAYPAL_CLIENT_ID=process.env.PAYPAL_CLIENT_ID;
 const PAYPAL_CLIENT_SECRET=process.env.PAYPAL_CLIENT_SECRET;
@@ -61,15 +61,10 @@ app.use((req, res) => {
 
 const port=4000;
 // Kill the port if it's already in use
-killPort(port)
-    .then(() => {
+
         // Port is now free, start the server
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
             console.log("http://localhost:4000")
         });
-    })
-    .catch((err) => {
-        // Unable to kill the port
-        console.error(`Failed to kill port ${port}: ${err.message}`);
-    });
+ 
