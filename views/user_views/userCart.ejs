@@ -1,0 +1,333 @@
+<%- include("partials/header") %>
+
+
+
+	<%- include("partials/navbar"),{user:user} %>
+		<section class="dashboard section">
+			<!-- Container Start -->
+			<div class="container">
+				<% if (cartItems.length===0) { %>
+					<!-- Row Start -->
+					<div class="row justify-content-center align-items-center">
+						<div class="col-md-4 text-center">
+							<img src="/user_public/images/cat.jpg" style="width: 500px;" alt="">
+							<a href="/" class="btn btn-primary my-3">Continue Shopping</a>
+							
+						</div>
+					</div>
+					<!-- Row End -->
+					
+					<% } else { %>
+				<!-- Row Start -->
+				<div class="row">
+
+					<div class="col-lg-8">
+						<!-- Recently Favorited -->
+						<div class="widget dashboard-container my-adslist">
+
+							<% let totalAmount=0; %>
+								
+										<table class="table table-responsive product-dashboard-table">
+											<thead class="delete delete-btn">
+												<tr>
+													<th>Image</th>
+													<th>Product Quantity Update</th>
+													<th class="text-center">Total</th>
+													<th class="text-center">Category</th>
+													<th class="text-center">Remove</th>
+												</tr>
+											</thead>
+											<tbody>
+
+												<tr>
+													<% cartItems.reverse().forEach((item)=> { %>
+														<td class="product-thumb">
+															<img width="80px" height="auto"
+																src="<%= item.product.photo[0] %>"
+																alt="image description">
+														</td>
+														<td class="product-details">
+															<h3 class="title">
+																<%= item.product.name %>
+															</h3>
+															<% if (item.quantity> 0) { %>
+																<p class="add-id quantity-display"
+																	data-item-id="<%= item._id %>"><span
+																		style="color:green;">Unit Price:<%=
+																			item.product.price %></span></p>
+																<p class="add-id quantity-display"
+																	data-item-id="<%= item._id %>"></p>
+																<% } %>
+
+																	<div class="qty"><button class="increment-btn"
+																			style="height: 40px; width:40px;border-radius: 25px 0 0 25px ; background: #5672f9; border: none;"
+																			data-item-id="<%= item._id %>"><span
+																				style="color: white;">+</span></button>
+																		<p class="quantity-display"
+																			style="display: inline-block;"> <span
+																				id="productQty<%= item._id %>">
+																				<%= item.quantity %>
+																			</span> </p> <button class="decrement-btn"
+																			data-item-id="<%= item._id %>"
+																			style="height: 40px;width: 40px;border-radius:0 25px 25px 0; background: #5672f9; border: none;">-</button>
+																	</div>
+
+														</td>
+														<td class="product-category">
+															<span id="totalPrice<%= item._id %>"> Rs.<%= item.quantity *
+																	item.product.price %>
+																	<% totalAmount +=item.quantity * item.product.price;
+																		%></span>
+														</td>
+														<td class="product-category">
+															<span class="categories">
+																<%= item.product.category_name %>
+															</span>
+														</td>
+														<td class="action" data-title="Action">
+															<div>
+																<ul class="list-inline justify-content-center">
+
+																	<li class="list-inline-item">
+																		<a data-placement="top" title="Delete"
+																			class="delete delete-btn"
+																			data-item-id="<%= item._id %>"
+																			href="javascript:void(0);">
+																			<i class="fa fa-trash"></i>
+
+																		</a>
+																	</li>
+																</ul>
+															</div>
+														</td>
+
+												</tr>
+												<% }); %>
+													
+											</tbody>
+
+										</table>
+
+						</div>
+
+
+
+
+					</div>
+					<div class="col-lg-4">
+						<div class="sidebar">
+
+							<% if (cartItems.length===0) { %>
+
+
+
+								<% } else { %>
+
+									<div class="widget disclaimer" class="grandTotal">
+										<h5 class="widget-header"> <strong>GRAND TOTAL</strong> </h5>
+
+										<ul class="price-list">
+
+
+
+											<li class="widget-cart-total">
+												<h2 id="totalAmount"> &#8377;<%= totalAmount %>/-</h2>
+
+
+											</li>
+
+											<li class="total-amount">
+
+											</li>
+										</ul>
+
+
+
+
+
+
+
+
+									</div>
+
+
+									<!-- Dashboard Links -->
+									<div class="widget user-dashboard-menu">
+
+										<ul class="grandTotal">
+
+											<li class="active">
+												<a href="/getAddress"><i class="fa fa-bookmark-o"></i>
+													Proceed To CheckOut </a>
+											</li>
+
+
+										</ul>
+										<% } %>
+									</div>
+
+						</div>
+					</div>
+				</div>
+				<!-- Row End -->
+				<% } %>
+			</div>
+			<!-- Container End -->
+		</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+		<script>
+
+			$(document).ready(function () {
+				$('.increment-btn').click(function () {
+					var $div = $(this).closest('div');
+					var itemId = $div.find('.increment-btn').data('item-id');
+
+					var $qtyDisplay = $div.find('#productQty' + itemId);
+
+
+					// Send a POST request
+					$.ajax({
+						url: '/findCartItems/incrimentQuantity',// Replace with your actual endpoint URL
+						type: 'POST',
+						data: {
+							itemId: itemId
+						}, // Include the item ID in the request
+						success: function (response) {
+							// Handle the success response
+							console.log(response)
+
+							if (response.success) {
+								// Update the quantity displayed in the <p> tag
+								// Update the quantity displayed in the <p> tag and store it in session storage
+								var updatedCart = response.updatedCart;
+								var totalPrice = response.indvidualTotal;
+								var grandTotal = response.totalPrice;
+								$('#productQty' + itemId).text(updatedCart);
+								$('#totalPrice' + itemId).text("Rs." + totalPrice);
+								$('#totalAmount').text("₹" + grandTotal + "/-");
+
+
+
+
+
+							} else {
+								// Display an error message or handle the error case as needed
+							}
+
+						},
+						error: function (xhr, status, error) {
+							// Handle the error response
+						}
+					});
+				});
+				$('.decrement-btn').click(function () {
+					var $div = $(this).closest('div');
+					var itemId = $div.find('.increment-btn').data('item-id');
+					var $qty = $div.find('.qty');
+					var quantityValue = $('#productQty' + itemId).text();
+
+
+
+					// Send a POST request
+					$.ajax({
+						url: '/findCartItems/decrimentQuantity', // Replace with your actual endpoint URL
+						type: 'POST',
+						data: { itemId: itemId }, // Include the item ID in the request
+						success: function (response) {
+
+
+							var updatedCart = response.updatedCart;
+							var totalPrice = response.indvidualTotal;
+							var grandTotal = response.totalPrice;
+							$('#productQty' + itemId).text(updatedCart);
+							$('#totalPrice' + itemId).text("Rs." + totalPrice);
+							$('#totalAmount').text("₹" + grandTotal + "/-");
+
+
+							function showToast() {
+								var toast = document.getElementById('toast');
+								toast.classList.add('show');
+								setTimeout(function () {
+									toast.classList.remove('show');
+								}, 3000); // Hide the toast after 3 seconds
+							}
+
+							// Call the showToast() function directly
+							showToast();
+						},
+						error: function (xhr, status, error) {
+							// Handle the error response
+						}
+					});
+				});
+			});
+
+
+
+
+
+			// Delete item
+			$('.delete-btn').click(function () {
+				var itemId = $(this).data('item-id');
+				var deleteButton = $(this); // Store the button element reference
+
+				// Send AJAX request to delete the cart item
+				$.ajax({
+					url: '/cart/delete-item/' + itemId,
+					method: 'DELETE',
+					success: function (response) {
+						// Remove the deleted item from the page
+						deleteButton.closest('tr').remove();
+						$('#totalAmount').text("₹" + response.totalPrice + "/-");
+						console.log(response);
+
+
+						// Check if the cart is empty
+						if ($('.delete-btn').length === 0) {
+							$('.cart-table').append('<tr><td colspan="4">Your cart is empty.</td></tr>');
+							console.log("jjddhhh");
+
+						}
+
+						if (response.totalPrice === 0) {
+							$('.grandTotal').remove();
+							$('#totalAmount').text("₹" + response.totalPrice + "/-");
+
+
+						}
+					},
+					error: function (error) {
+						console.error('Error deleting cart item:', error);
+
+					}
+				});
+			});
+
+
+
+
+
+
+
+		</script>
+
+
+		<%- include("partials/footer") %>

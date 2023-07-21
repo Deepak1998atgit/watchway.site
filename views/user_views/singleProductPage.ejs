@@ -1,0 +1,536 @@
+<%- include("partials/header") %>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+	<%- include("partials/navbar") %>
+		<style>
+			Result Skip Results Iframe EDIT ON * {
+				box-sizing: border-box;
+			}
+
+			body {
+				background-color: #fff;
+				font-family: Lato, Helvetica, Arial, sans-serif;
+				font-weight: 400;
+				color: #666;
+			}
+
+			a {
+				color: #27ae60;
+			}
+
+			a:hover,
+			a:visited {
+				color: #36d278;
+			}
+
+			/* focus styling */
+
+			.rating-slider:focus {
+				outline: 2px solid red;
+			}
+
+			form {
+				margin: 0 auto 3rem;
+			}
+
+			form:first-of-type {
+				margin-top: 3rem;
+			}
+
+			fieldset {
+				margin: 0;
+			}
+
+			legend {
+				margin-bottom: 0.5rem;
+			}
+
+			input[type=radio] {
+				border: 3px solid black;
+			}
+
+			.rating {
+				display: block;
+				position: relative;
+				width: 150px;
+				min-height: 60px;
+				padding: 0;
+				border: none;
+			}
+
+			.rating>input {
+				position: absolute;
+				margin-right: -100%;
+				opacity: 0;
+			}
+
+			.rating>input:checked~label,
+			.rating>input:focus~label {
+				background-position: 0 0;
+			}
+
+			.rating>input:checked+label,
+			.rating>input:focus+label {
+				background-position: 0 -30px;
+			}
+
+			.rating>input:hover~label {
+				background-position: 0 0;
+			}
+
+			.rating>input:hover+label {
+				background-position: 0 -30px;
+			}
+
+			.rating>input:hover+label:before {
+				opacity: 1;
+			}
+
+			.rating>input:focus+label {
+				outline: 1px dotted #999;
+			}
+
+			.rating .focus-ring {
+				position: absolute;
+				left: 0;
+				width: 100%;
+				height: 30px;
+				outline: 2px dotted #999;
+				pointer-events: none;
+				opacity: 0;
+			}
+
+			.rating>.input-no-rate:focus~.focus-ring {
+				opacity: 1;
+			}
+
+			.rating>label {
+				position: relative;
+				float: left;
+				width: 30px;
+				font-size: 0.1em;
+				color: transparent;
+				cursor: pointer;
+				background-repeat: no-repeat;
+				background-position: 0 -30px;
+			}
+
+			.rating>label,
+			.rating>label:before {
+				height: 30px;
+				background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAA8CAMAAABGivqtAAAAxlBMVEUAAACZmZn2viTHuJ72viOampqampr1viSampr3vySampqdnZ34wiX1vSSampr1vSOZmZmampr1viT2vSOampr2viT2viSampr2viSampr2vyX4vyWbm5v3vSSdnZ32wSadnZ36wCWcnJyZmZn/wSr/2ySampr2vSP2viSZmZn2vSSZmZn2vST2viSampr2viSbm5ubm5uZmZn1vSSampqbm5v2vSWampqampr3vSf5wiT5vyagoKD/xCmkpKT/yCSZmZn1vSO4V2dEAAAAQHRSTlMA+vsG9fO6uqdgRSIi7+3q39XVqZWVgnJyX09HPDw1NTAwKRkYB+jh3L6+srKijY2Ef2lpYllZUU5CKigWFQ4Oneh1twAAAZlJREFUOMuV0mdzAiEQBmDgWq4YTWIvKRqT2Htv8P//VJCTGfYQZnw/3fJ4tyO76KE0m1b2fZu+U/pu4QGlA7N+Up5PIz9d+cmkbSrSNr9seT3GKeNYIyeO5j16S28exY5suK0U/QKmmeCCX6xs22hJLVkitMImxCvEs8EG3SCRCN/ViFPqnq5epIzZ07QJJvkM9Tkz1xnkmXbfSvR7f4H8AtXBkLGj74mMvjM1+VHZpAZ4LM4K/LBWEI9jwP71v1ZEQ6dyvQMf8A/1pmdZnKce/VH1iIsdte4U8VEtY23xOujxtFpWDgKbfjD2YeEhY0OzfjGeLyO/XfnNpAcmcjDwKOXRfU1IyiTRyEkaiz67pb9oJHJb9vVqKfgjLBPyF5Sq9T0KmSUhQmtiQrJGPHVi0DoSabj31G2gW3buHd0pY85lNdcCk8xlNDPXMuSyNiwl+theIb9C7RLIpKvviYy+M6H8qGwSAp6Is19+GP6KxwnggJ/kq6Jht5rnRQA4z9zyRRaXssvyqp5I6Vutv0vkpJaJtnjpz/8B19ytIayazLoAAAAASUVORK5CYII=");
+			}
+
+			.star>label:before {
+				content: "";
+				position: absolute;
+				display: block;
+				background-position: 0 30px;
+				pointer-events: none;
+				opacity: 0;
+			}
+
+			.star>label:nth-of-type(5):before {
+				width: 120px;
+				left: -120px;
+			}
+
+			.star>label:nth-of-type(4):before {
+				width: 90px;
+				left: -90px;
+			}
+
+			.star>label:nth-of-type(3):before {
+				width: 60px;
+				left: -60px;
+			}
+
+			.star>label:nth-of-type(2):before {
+				width: 30px;
+				left: -30px;
+			}
+
+			.star>label:nth-of-type(1):before {
+				width: 0;
+				left: 0;
+			}
+
+			@media screen and (-webkit-min-device-pixel-ratio: 2),
+			screen and (min-resolution: 192dpi) {
+				.star>label {
+					background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAB4CAMAAACZ62E6AAABAlBMVEUAAACZmZmampr2vSObm5v/yiufn5+ampr1viP1viSZmZn2viOZmZmampqampr2viSampqampqcnJz5vyScnJz3wSf/wyn/xiujo6Oqqqr/0C/1vSOampr2viP2viOampr2viP2vST2viOampqampqampr1vyP3viSampr2vyT4vyX3viSbm5ubm5v5wCT8xSmgoKCampqampr3vyb2wiWenp72viOampqZmZmampr2viP2viP1viSampqbm5v2vyT3viObm5v4vyadnZ34wSSbm5v2viSZmZn2viP2vST2viP2viT1viOZmZn2viT2viX3viT3vyb2vyOZmZn1vSOZmZlNN+fKAAAAVHRSTlMA9uz4PQwS8O7r5+fTw4yMelw2MB0dFRELBgbS+/Hfu7uxqKWdg4N7ZmZMPi8pKRgPs0w7Nhb14drKw6Gck21tXkNDIyMZ1rDLycTBtaqVknlfV0sGP8ZwAAADW0lEQVRYw9zWvYqDQBSG4TPDoCAqKhYKQgoVLFaIgZCkiCBBUqVazv3fyu4aEXWdM85Uy779A+LP58AfTQgw73AwtxFiZIwbxMbUfuB3H4b49YNfZrbGodoI52+cm9hH9sbZwwAXOFbo2zjDsSzWxnecuuvaM8MpdtbEPs7y9azF5phZWrjERaWOPdpLbB81cICrgv3W4mvMLbU6RmFQeA5u5HhFEEbHLdWLsMxvHJXxW16Goh+ZqPyny1Az5j79SsCJoWHsBNAxQ9sNF26bWFuMC8v1LY+mmeTadjaqtaNnnXoxWBcde1nNWnzdb68xrOqvu22/MTzuPutujpJ122NvluSb8tTWk85CclDZQwLS0oa2TQpEKacsJy0kSJaQOKJxROKKxhWJ7zS+k9ijsUdim8Y2ZWNUFBP4pMKfOv8onX9WrsI5gd3VVLXtatxcuU0znGUHCUAS2DgrS6mT6hTzrXEjfIZj5Dk2xKkihqm4wKlQfQRqalhUP9UHo3FIPAG/Et44JVLsDDf0JHmB3OEByOwZES8hSAsviGjBdh3ylh6plmMnW4IyAUVJWcE/76vTell1EIaiMBwIAcWBA9GC0lIdKFXQQUsHVVCklN7ojf3+z3JOxYqK2TH555+K6CJJQtRbr9XtDmCnjH0AX9Va8J+liIMvDtRsCk2pEs6hKVexR2g7KuDihwt5a9MfprY0fkLXU9ZmFLpoJolN6GXKWWfZx0tHCocwKJSxC22ItYUEjmBUJHFjfYz1xQxlfaLiZsBExq2IPtbkNbLtOwwuGgjTLkH43mYtSzam7+1Bsr3nm5uExBQUozEh9V7N7uvmwZcqdpm0C6vJW63bZEuXtbrV2zpDzhrpYLBWMnY1mjV7JWFtMio7zbWniWFxvHnWm1yGxXmOPXP+L3YV2ysjnNhaZNeMcHPvuL27BMnVMaujljBAYyje4niH4g2ONyh+4PiB4gOODyjWcKxh1gZBNoJjEY4R/BLhF4IDEQ4QPBoEoyxH4+bxrUsHyxwxQlg0WHXqYifVLmo67cKY/UtaXFxBV26TLjuHrkp8BPJTMij1xQejdkgO24nf7dBOCRcbzQuNOR9Qs64GzzrfQa8It2oFAA6Zrga9xEeq1KHmLUHIiCAWInsg1x/MLqkMsItF8QAAAABJRU5ErkJggg==");
+				}
+			}
+		</style>
+		<style>
+			.card {
+				border: none
+			}
+
+			.product {
+				background-color: #eee
+			}
+
+			.brand {
+				font-size: 13px
+			}
+
+			.act-price {
+				color: red;
+				font-weight: 700
+			}
+
+			.dis-price {
+				text-decoration: line-through
+			}
+
+			.about {
+				font-size: 14px
+			}
+
+			.color {
+				margin-bottom: 10px
+			}
+
+			label.radio {
+				cursor: pointer
+			}
+
+			label.radio input {
+				position: absolute;
+				top: 0;
+				left: 0;
+				visibility: hidden;
+				pointer-events: none
+			}
+
+			label.radio span {
+				padding: 2px 9px;
+				border: 2px solid #ff0000;
+				display: inline-block;
+				color: #ff0000;
+				border-radius: 3px;
+				text-transform: uppercase
+			}
+
+			label.radio input:checked+span {
+				border-color: #ff0000;
+				background-color: #ff0000;
+				color: #fff
+			}
+
+			.btn-danger {
+				background-color: #ff0000 !important;
+				border-color: #ff0000 !important
+			}
+
+			.btn-danger:hover {
+				background-color: #da0606 !important;
+				border-color: #da0606 !important
+			}
+
+			.btn-danger:focus {
+				box-shadow: none
+			}
+
+			.cart i {
+				margin-right: 10px
+			}
+		</style>
+
+		<div class="container mt-5 mb-5 ">
+			<div class="row d-flex justify-content-center">
+				<div class="col-lg-12">
+					<div class="card">
+						<div class="row my-4">
+							<div class="col-lg-6">
+								<div class="col-lg-6 mb-5 ftco-animate">
+									<a href="#" class="image">
+										<img id="mainImage" src="/<%= product.photo[0] %>" class="img-fluid img-zoom"
+											alt="Colorlib Template" data-zoom-image="/<%= product.photo[0] %>">
+									</a>
+									<div class="row mt-4">
+										<div class="col-lg-4 mb-4 ftco-animate">
+											<a href="#" class="sub-photo-link" data-photo="/<%= product.photo[0] %>">
+												<img src="/<%= product.photo[0] %>" class="img-fluid sub-photo"
+													alt="Sub Photo 1">
+											</a>
+										</div>
+										<div class="col-lg-4 mb-4 ftco-animate">
+											<a href="#" class="sub-photo-link" data-photo="/<%= product.photo[1] %>">
+												<img src="/<%= product.photo[1] %>" class="img-fluid sub-photo"
+													alt="Sub Photo 2">
+											</a>
+										</div>
+										<div class="col-lg-4 mb-4 ftco-animate">
+											<a href="#" class="sub-photo-link" data-photo="/<%= product.photo[2] %>">
+												<img src="/<%= product.photo[2] %>" class="img-fluid sub-photo"
+													alt="Sub Photo 3">
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class=" mt-4 mb-3 col-lg-6">
+
+								<div class="product p-4 ">
+
+
+									<div class="d-flex justify-content-between align-items-center">
+										<div class="d-flex align-items-center"> <i class="fa fa-long-arrow-left"></i>
+										</div>
+										<% if(user){ %>
+											<a href="/cart"> <i class="fa fa-shopping-cart text-muted"></a></i>
+											<% } %>
+									</div>
+									<div class="mt-4 mb-3 "> <span class="text-uppercase text-muted brand">
+											<%= product.category_name %>
+										</span>
+										<h3 class="text-uppercase">
+											<%= product.name %>
+										</h3>
+										<div class="price d-flex flex-row align-items-center"> <span class="act-price">
+												<h1>₹<%= product.price %>/-</h1>
+											</span>
+											<!-- <div class="ml-2"> <small class="dis-price">$59</small> <span>40%
+															OFF</span> </div> -->
+										</div>
+									</div>
+									<!-- <p class="about">Shop from a wide range of t-shirt from orianz. Pefect for
+												your everyday use, you could pair it with a stylish pair of jeans or
+												trousers complete the look.</p> -->
+									<div class="sizes mt-5">
+
+									</div>
+									<div class="cart mt-4 align-items-center my-5">
+										<% if(user) { %>
+											<button class="btn btn-danger text-uppercase  mr-2 px-4">
+												<a href="/addToCart/<%= product._id %>" class="text-white"
+													id="addToCartLink">Add to cart</a>
+											</button>
+											<a href="#" id="wishlistButton" data-product-id="<%= product._id %>"
+												class="fa fa-heart text-muted"></i></a>
+
+											<% }else {%>
+												<button class="btn btn-danger text-uppercase  mr-2 px-4">
+													<a href="/userSignIn" class="text-white">Add to cart</a>
+												</button>
+
+												<% } %>
+									</div>
+									<div class="cart mt-1 align-items-center  my-5">
+										<form id="ratingForm" class="rating-slider" method="post"
+											action="/ratingProduct/<%= product._id %>">
+											<fieldset class="rating">
+
+												<input type="radio" id="no-rate" class="input-no-rate" name="rating"
+													value="0" checked="" aria-label="No rating.">
+
+												<input type="radio" id="rate1" name="rating" value="1">
+												<label for="rate1">1 star</label>
+
+												<input type="radio" id="rate2" name="rating" value="2">
+												<label for="rate2">2 stars</label>
+
+												<input type="radio" id="rate3" name="rating" value="3">
+												<label for="rate3">3 stars</label>
+
+												<input type="radio" id="rate4" name="rating" value="4">
+												<label for="rate4">4 stars</label>
+
+												<input type="radio" id="rate5" name="rating" value="5">
+												<label for="rate5">5 stars</label>
+
+												<span class="focus-ring"></span>
+											</fieldset>
+										</form>
+
+									</div>
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<footer class="footer-bottom ">
+
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-6 text-center text-lg-left mb-3 mb-lg-0">
+		   
+						<div class="copyright">
+							<p>WachWay
+								<script>
+									var CurrentYear = new Date().getFullYear()
+									document.write(CurrentYear)
+								</script>. Designed & Developed by <a class="text-white" href="https://themefisher.com">WatchWay</a>
+							</p>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<!-- Social Icons -->
+						<ul class="social-media-icons text-center text-lg-right">
+							<li><a class="fa fa-facebook" href="https://www.facebook.com/themefisher"></a></li>
+							<li><a class="fa fa-twitter" href="https://www.twitter.com/themefisher"></a></li>
+							<li><a class="fa fa-pinterest-p" href="https://www.pinterest.com/themefisher"></a></li>
+							<li><a class="fa fa-github-alt" href="https://www.github.com/themefisher"></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- Container End -->
+			<!-- To Top -->
+			<div class="scroll-top-to">
+				<i class="fa fa-angle-up"></i>
+			</div>
+		</footer>
+
+
+
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<!-- Add these lines to include the Toastr JavaScript file and initialize it -->
+		<script src="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.js"></script>
+		<!-- Elevate Zoom CDN -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+
+		<script>
+			$('#wishlistButton').on('click', function (event) {
+				event.preventDefault();
+
+				var addToCartButton = $(this);
+				var productId = $(this).data('product-id');
+				// Handle delete confirmation
+				$.get('/addToWishList/' + productId, function (response) {
+					// Handle the response
+					if (response.success) {
+						console.log("kkk");
+						console.log(response.success);
+
+						console.log(response);
+						// Initialize Toastr with desired configuration options
+						toastr.options = {
+							positionClass: 'toast-top-center',
+							closeButton: true,
+							progressBar: true,
+							preventDuplicates: true,
+							timeOut: 2000 // Set the duration for which the toast message will be displayed (in milliseconds)
+						};
+						toastr.success(response.message);
+					} else {
+						// Error occurred while removing the item
+						console.error('Failed to remove item from wishlist:', response.error);
+						// Perform any necessary error handling
+					}
+				});
+
+			});
+
+
+
+
+			$(document).ready(function () {
+				// Handle click event on rating stars
+				$('.rating input[type="radio"]').on('click', function () {
+					// Get the selected rating value
+					var rating = $(this).val();
+					// Store the selected rating in localStorage
+					localStorage.setItem('selectedRating', rating);
+
+					// Send a POST request to the backend
+					$.ajax({
+						url: $('#ratingForm').attr('action'), // URL from the form's action attribute
+						method: 'POST',
+						data: {
+							rating: rating
+						},
+						success: function (response) {
+							// Handle the successful response from the backend
+							console.log('Rating submitted successfully.');
+						},
+						error: function (xhr, status, error) {
+							// Handle any errors that occurred during the request
+							console.error('Error submitting rating:', error);
+						}
+					});
+				});
+			});
+
+
+
+
+
+
+
+
+
+
+
+			$(document).ready(function () {
+				console.log("kkk")
+				// Image changing
+				$('.sub-photo-link').on('click', function (event) {
+					event.preventDefault();
+					console.log("kkk")
+					var photoUrl = $(this).data('photo');
+					$('#mainImage').attr('src', photoUrl).data('zoom-image', photoUrl);
+					// Reinitialize elevateZoom on the main image
+					$('.img-zoom').elevateZoom({
+						responsive: true,
+						zoomWindowWidth: 200,
+						zoomWindowHeight: 200,
+					});
+				});
+
+				// Image zooming
+				$('.img-zoom').elevateZoom({
+						responsive: true,
+						zoomWindowWidth: 200,
+						zoomWindowHeight: 200,
+					});
+			});
+
+
+
+
+
+
+
+
+
+
+
+			$(document).ready(function () {
+				$('#addToCartLink').click(function (event) {
+					event.preventDefault(); // Prevent the default link behavior
+
+					// Make the AJAX request
+					$.ajax({
+						url: $(this).attr('href'), // Get the URL from the link's "href" attribute
+						method: 'GET',
+						success: function (response) {
+							// Handle the response
+							//   $('.message-container').text(response.message); // Update the content of the message container
+							if (response) {
+								Swal.fire({
+									title: 'CART',
+									text: response.message,
+									icon: 'success',
+									confirmButtonText: 'OK'
+								});
+							}
+						},
+						error: function (error) {
+							console.error('AJAX error:', error);
+
+						}
+					});
+				});
+			});
+		</script>
+

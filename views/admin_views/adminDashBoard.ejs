@@ -1,0 +1,279 @@
+<%- include("partials/header") %>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css" />
+
+
+    <div class="container-scroller">
+        <!-- partial:partials/_sidebar.html -->
+        <%- include("partials/sidebar") %>
+            <!-- partial -->
+            <div class="container-fluid page-body-wrapper">
+                <!-- partial:partials/_navbar.html -->
+                <%- include("partials/navbar") %>
+                    <!-- partial -->
+                    <div class="main-panel">
+                        <div class="content-wrapper">
+
+                            <div class="row">
+                                <div class="col-lg-6 grid-margin stretch-card">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title">Line chart</h4>
+                                            <canvas id="lineChart" style="height:250px"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6 grid-margin stretch-card">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title">Order Status</h4>
+                                            <canvas id="doughnutChart" style="height:250px"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- sales reports -->
+
+
+
+
+                        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+                        <script src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+                        <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+                        <script src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.print.min.js"></script>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                var productTable = document.getElementById('productTable');
+
+                                var dataTable = new DataTable(productTable, {
+                                    dom: 'Bfrtip',
+                                    buttons: [
+                                        {
+                                            extend: 'csv',
+                                            className: 'text-white'
+                                        },
+                                        {
+                                            extend: 'print',
+                                            className: 'text-danger'
+                                        },
+                                        {
+                                            extend: 'pdf',
+                                            className: 'text-danger'
+                                        }
+                                    ]
+
+                                });
+                            });
+
+                        </script>
+
+
+                        <script>
+                            // Fetch order status data from the server
+                            fetch('/order-status') // Assuming the server is running on the same domain
+                                .then(response => response.json())
+                                .then(data => {
+                                    // Prepare the data for the chart
+                                    const labels = data.map(item => item._id);
+                                    const counts = data.map(item => item.count);
+                                    const statusLabels = ['Pending', 'Delivered', 'Returned', 'Refunded Amount'];
+
+                                    // Create the pie chart
+                                    const ctx = document.getElementById('doughnutChart').getContext('2d');
+                                    new Chart(ctx, {
+                                        type: 'doughnut',
+                                        data: {
+                                            labels: labels,
+                                            datasets: [{
+                                                label: 'Order Status',
+                                                data: counts,
+                                                backgroundColor: [
+                                                    'rgba(255, 99, 132, 0.2)', // Pending
+                                                    'rgba(54, 162, 235, 0.2)', // Delivered
+                                                    'rgba(153, 102, 255, 0.2)', // Returned
+                                                    'rgba(255, 206, 86, 0.2)' // Refunded Amount
+                                                ],
+                                                borderColor: [
+                                                    'rgba(255, 99, 132, 1)',
+                                                    'rgba(54, 162, 235, 1)',
+                                                    'rgba(153, 102, 255, 1)',
+                                                    'rgba(255, 206, 86, 1)'
+                                                ],
+                                                borderWidth: 1
+                                            }]
+                                        },
+                                        options: {
+                                            aspectRatio: 1,
+                                            responsive: true,
+                                            plugins: {
+                                                legend: {
+                                                    labels: {
+                                                        generateLabels: function (chart) {
+                                                            const defaultLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                                            const customLabels = defaultLabels.map((label, index) => {
+                                                                label.text = statusLabels[index];
+                                                                return label;
+                                                            });
+                                                            return customLabels;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error retrieving order status data:', error);
+                                });
+
+
+                        </script>
+
+                        <script>
+                            // Fetch monthly order data from the server
+                            fetch('/monthly-orders') // Assuming the server is running on the same domain
+                                .then(response => response.json())
+                                .then(data => {
+                                    // Prepare the data for the chart
+                                    const months = data.map(item => item.month);
+                                    const orderCounts = data.map(item => item.totalOrders);
+
+                                    // Create the bar chart
+                                    const ctx = document.getElementById('barChart').getContext('2d');
+                                    new Chart(ctx, {
+                                        type: 'bar',
+                                        data: {
+                                            labels: months,
+                                            datasets: [{
+                                                label: 'Monthly Orders',
+                                                data: orderCounts,
+                                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                                borderColor: 'rgba(75, 192, 192, 1)',
+                                                borderWidth: 1,
+                                                barPercentage: 0.2 // Adjust the value to make the bars narrower or wider
+                                            }]
+                                        },
+                                        options: {
+                                            aspectRatio: "1",
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true,
+                                                    precision: 2
+                                                },
+                                                x: {
+                                                    beginAtZero: true,
+                                                    precision: 0
+                                                }
+                                            },
+                                            plugins: {
+                                                legend: {
+                                                    labels: {
+                                                        generateLabels: function (chart) {
+                                                            const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                                            labels.forEach((label, index) => {
+                                                                label.text = statusLabels[index];
+                                                            });
+                                                            return labels;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error retrieving monthly order data:', error);
+                                });
+                        </script>
+                        <script>
+                            fetch('lineChart')
+                                .then(response => response.json())
+                                .then(data => {
+                                    const dates = data.map(item => item._id);
+
+                                    // Extract the order counts for each status type
+                                    const pendingCounts = data.map(item => item.pendingCount);
+                                    const deliveredCounts = data.map(item => item.deliveredCount);
+                                    const cancelledCounts = data.map(item => item.cancelledCount);
+
+                                    const lineChartCanvas = document.getElementById('lineChart').getContext('2d');
+                                    new Chart(lineChartCanvas, {
+                                        type: 'line',
+                                        data: {
+                                            labels: dates,
+                                            datasets: [
+                                                {
+                                                    label: 'Pending',
+                                                    data: pendingCounts,
+                                                    fill: false,
+                                                    borderColor: 'rgb(75, 192, 192)',
+                                                    tension: 0.1
+                                                },
+                                                {
+                                                    label: 'Delivered',
+                                                    data: deliveredCounts,
+                                                    fill: false,
+                                                    borderColor: 'rgb(255, 99, 132)',
+                                                    tension: 0.1
+                                                },
+                                                {
+                                                    label: 'Cancelled',
+                                                    data: cancelledCounts,
+                                                    fill: false,
+                                                    borderColor: 'rgb(54, 162, 235)',
+                                                    tension: 0.1
+                                                }
+                                                // Add more datasets for other status types if needed
+                                            ]
+                                        },
+                                        options: {
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true,
+                                                    precision: 0,
+                                                    stepSize: 1
+                                                }
+                                            }
+                                        }
+                                    });
+                                })
+                                .catch(error => {
+                                    console.log('Error fetching daily orders:', error);
+                                });
+
+
+                        </script>
+
+
+
+
+                        <!-- container-scroller -->
+                        <!-- plugins:js -->
+                        <script src="/admin_public/assets/vendors/js/vendor.bundle.base.js"></script>
+                        <!-- endinject -->
+                        <!-- Plugin js for this page -->
+                        <script src="/admin_public/assets/vendors/chart.js/Chart.min.js"></script>
+                        <!-- End plugin js for this page -->
+                        <!-- inject:js -->
+
+                        <!-- endinject -->
+
+                    </div>
+                    </footer>
+                    <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+    </div>
+
+
+
+    <%- include("partials/footer") %>
