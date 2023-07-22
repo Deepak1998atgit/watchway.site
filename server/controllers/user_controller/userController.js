@@ -195,10 +195,8 @@ exports.signUp = (req, res) => {
 
 //user login check
 exports.findUser = async (req, res) => {
-
     const email = req.body.email;
     const password = req.body.password;
-
     try {
         const user = await userSchema.findOne({ email: email });
 
@@ -921,26 +919,26 @@ exports.walletManagement = async (req, res) => {
         console.log(difference, "kkk")
         // const totalAmount = Math.abs(difference);
         // console.log(totalAmount, "kk")
-        
+
         if (!wallet) {
             return res.status(404).redirect(`/proceedToCheckOut/${addresId}`);
         } else if (difference < 0) {
 
             console.log(tenPercent, "jjrrr");
             user.wallet.push({ amount: total, deduct: wallet.amount, applied: false });
-            
+
             res.status(200).redirect(`/proceedToCheckOut/${addresId}?wallet=${wallet.amount}`);
             wallet.amount = 0;
             await user.save();
             await wallet.save(); // Save the updated wallet document
-            
+
         } else {
             // Deduct the amount from the wallet
             wallet.amount -= tenPercent;
             console.log(tenPercent, "jj");
             user.wallet.push({ amount: total, deduct: tenPercent, applied: false });
 
-          
+
             await user.save();
             await wallet.save(); // Save the updated wallet document
 
@@ -1595,16 +1593,18 @@ exports.cancelOrder = async (req, res) => {
 
 exports.redeemCoupon = async (req, res) => {
     try {
+        
         const userId = req.user.userId;
         const user = await userSchema.findById(userId);
+       
 
 
 
         const addressId = req.params.addressId;
         const { promoCode, total } = req.body;
-        console.log("ok", promoCode, total);
+       
         const amount = parseInt(total);
-        console.log(amount);
+        
         const couponFound = await coupon.findOne({ 'coupon.promoCode': promoCode });
 
         if (couponFound) {
@@ -1613,8 +1613,12 @@ exports.redeemCoupon = async (req, res) => {
 
             if (amount >= thresholdAmount) {
 
-                const found = await userSchema.findOne({ 'coupon.promoCode': promoCode });
-                if (!found) {
+                const hasCouponNotApplied = user.coupon.some((coupon) => coupon.applied === false);
+              
+
+                
+                if (!hasCouponNotApplied) {
+
                     const percentage = percentageOff / 100;
                     const deduct = percentage * amount;
                     const payable = amount - deduct;
@@ -1622,7 +1626,20 @@ exports.redeemCoupon = async (req, res) => {
                     user.save();
                     res.redirect(`/proceedToCheckOut/${addressId}?payable=${payable}`);
 
-                } else {
+                }else if(hasCouponNotApplied){
+                    const existingCoupon = user.coupon.find((coupon) => coupon.promoCode === promoCode && coupon.applied === false);
+                    
+                    const percentage = percentageOff / 100;
+                   
+                    const deduct = percentage * amount;
+                    const payable = amount - deduct;
+                    existingCoupon.discound = deduct;
+                    user.save();
+                    console.log("hshshh",hasCouponNotApplied,"hhhh");
+                    return res.redirect(`/proceedToCheckOut/${addressId}?payable=${payable}`);
+
+                }
+                 else {
                     res.redirect(`/proceedToCheckOut/${addressId}?message=Sorry coupon already used`);
 
 
