@@ -742,6 +742,7 @@ exports.deactivateCoupon = async (req, res) => {
 exports.adminBannerAddForm = async (req, res) => {
   try {
     const banners = await bannerSchema.find({});
+    console.log( banners);
     res.render("adminBannerAdd", { banners });
 
 
@@ -760,17 +761,17 @@ exports.addbanner = async (req, res) => {
     console.log(photo)
     const bannerExists = await bannerSchema.findOne({ title: req.body.title });
     if (bannerExists) {
-      res.render("adminBannerAdd")
+      res.render("adminBannerAdd");
     } else {
-      const banner = new bannerSchema({
+      const banners = new bannerSchema({
         title: req.body.title,
         subtitle: req.body.subtitle,
         image: photo,
         activate: true
       })
-      await banner.save()
-      console.log(banner)
-      res.render("adminBannerAdd")
+      await banners.save()
+     
+      res.redirect("/adminBannerAddForm");
     }
   }
   catch (err) {
