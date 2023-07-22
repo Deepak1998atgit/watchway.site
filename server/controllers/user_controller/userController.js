@@ -1084,8 +1084,8 @@ exports.proceedToPayPal = async (req, res) => {
                 },
 
                 redirect_urls: {
-                    return_url: `http://localhost:4000/paypal-success/${addressId}`,
-                    cancel_url: 'http://localhost:4000/paypal-cancel'
+                    return_url: `https://watchway.site/paypal-success/${addressId}`,
+                    cancel_url: 'https://watchway.site/paypal-cancel'
                 },
                 transactions: [{
                     amount: {
