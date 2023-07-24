@@ -507,12 +507,17 @@ exports.getWishList = async (req, res) => {
         const user = await userSchema.findById(userId);
         console.log("kkkkk", user)
         let userWishList = await WishList.findOne({ userId }).populate('wishList.product');
-        const wishList = userWishList.wishList;
-        res.render("wishList", { wishList, user, CartLength });
+        if (userWishList) {
+            const wishList = userWishList.wishList;
+            res.render("wishList", { wishList, user, CartLength });
 
+        } else {
+            const wishList =null;
+            res.render("wishList", { wishList,user, CartLength });
 
-
+        }
     } catch (error) {
+       
         console.log(error, "error on getWishList")
     }
 
@@ -1593,18 +1598,18 @@ exports.cancelOrder = async (req, res) => {
 
 exports.redeemCoupon = async (req, res) => {
     try {
-        
+
         const userId = req.user.userId;
         const user = await userSchema.findById(userId);
-       
+
 
 
 
         const addressId = req.params.addressId;
         const { promoCode, total } = req.body;
-       
+
         const amount = parseInt(total);
-        
+
         const couponFound = await coupon.findOne({ 'coupon.promoCode': promoCode });
 
         if (couponFound) {
@@ -1614,9 +1619,9 @@ exports.redeemCoupon = async (req, res) => {
             if (amount >= thresholdAmount) {
 
                 const hasCouponNotApplied = user.coupon.some((coupon) => coupon.applied === false);
-              
 
-                
+
+
                 if (!hasCouponNotApplied) {
 
                     const percentage = percentageOff / 100;
@@ -1626,20 +1631,20 @@ exports.redeemCoupon = async (req, res) => {
                     user.save();
                     res.redirect(`/proceedToCheckOut/${addressId}?payable=${payable}`);
 
-                }else if(hasCouponNotApplied){
+                } else if (hasCouponNotApplied) {
                     const existingCoupon = user.coupon.find((coupon) => coupon.promoCode === promoCode && coupon.applied === false);
-                    
+
                     const percentage = percentageOff / 100;
-                   
+
                     const deduct = percentage * amount;
                     const payable = amount - deduct;
                     existingCoupon.discound = deduct;
                     user.save();
-                    console.log("hshshh",hasCouponNotApplied,"hhhh");
+                    console.log("hshshh", hasCouponNotApplied, "hhhh");
                     return res.redirect(`/proceedToCheckOut/${addressId}?payable=${payable}`);
 
                 }
-                 else {
+                else {
                     res.redirect(`/proceedToCheckOut/${addressId}?message=Sorry coupon already used`);
 
 
