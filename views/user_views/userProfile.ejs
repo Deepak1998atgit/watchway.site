@@ -129,9 +129,17 @@
                   </ul>
                   <% }); %>
               </div>
+              
+             
               <div class="pagination-buttons ">
+                <%  if(userDetail.address.length > 1 ){ %>
                 <button class="prev-button btn btn-transparent mx-4" style="border: none;color:blue;">Previous</button>
                 <button class="next-button btn  btn-transparent" style="border: none;color:blue;">Next</button>
+                <% } else if (userDetail.address.length === 1) { %>
+                  
+                 <% }else {%>
+                  <h4>No Address Here</h4>
+                 <% } %>
               </div>
             </div>
 
