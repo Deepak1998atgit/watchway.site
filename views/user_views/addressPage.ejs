@@ -40,20 +40,20 @@
                                         <div class="form-group">
                                             <label for="first-name">Name<strong style="color:red;">*</strong></label>
                                             <input type="text" class="form-control" id="first-name" name="name"
-                                                style="  border-radius: 15px 15px">
+                                                style="  border-radius: 15px 15px" required>
                                         </div>
                                         <!-- Last Name -->
                                         <div class="form-group">
                                             <label for="last-name">Phone Number<strong
                                                     style="color:red;">*</strong></label>
                                             <input class="form-control" type="tel" id="phone" name="phone"
-                                                maxlength="10" style="  border-radius: 15px 15px">
+                                                maxlength="10" style="  border-radius: 15px 15px" required>
                                         </div>
                                         <!-- Zip Code -->
                                         <div class="form-group">
                                             <label for="zip-code">Zip Code<strong style="color:red;">*</strong></label>
                                             <input type="number" class="form-control" id="zip-code" name="zip"
-                                                style="  border-radius: 15px 15px">
+                                                style="  border-radius: 15px 15px" required>
                                         </div>
                                       
                                     
@@ -74,19 +74,19 @@
                                         <label for="current-password">Communication Address<strong
                                                 style="color:red">*</strong></label>
                                         <input type="text" form="addressForm" class="form-control" id="address" name="address"
-                                            style="  border-radius: 15px 15px">
+                                            style="  border-radius: 15px 15px" required>
                                     </div>
                                     <!-- New Password -->
                                     <div class="form-group">
                                         <label for="new-password">City<strong style="color:red">*</strong></label>
                                         <input type="text" form="addressForm" class="form-control" id="city" name="city"
-                                            style="  border-radius: 15px 15px">
+                                            style="  border-radius: 15px 15px" required>
                                     </div>
                                     <!-- Confirm New Password -->
                                     <div class="form-group">
                                         <label for="confirm-password">State<strong style="color:red">*</strong></label>
                                         <input type="text" form="addressForm" class="form-control" id="state" name="state"
-                                            style="  border-radius: 15px 15px">
+                                            style="  border-radius: 15px 15px" required>
                                     </div>
                                 </div>
                                 <!-- Submit button -->
@@ -105,6 +105,8 @@
                                             </div>
 
                                             <div class="modal-body">
+                                                <% if( user.address.length > 0 && locals.user ) { %>
+                                                
                                                 <% user.address.forEach(function(address) { %>
                                                    
                                                         <h4>
@@ -135,8 +137,15 @@
                                                     </a>
 
                                                     </div>
+                                                    <div class="modal-footer"></div>
                                                     <% }) %>
-                                                        <div class="modal-footer"></div>
+                                                    <% } else { %>
+                                                    <h4>No Address Here Please Add</h4>
+                                                       
+                                                        
+                                                    <% } %>
+                                                    
+                                                        
                                             </div>
                                         </div>
                                     </div>
