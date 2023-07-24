@@ -512,12 +512,12 @@ exports.getWishList = async (req, res) => {
             res.render("wishList", { wishList, user, CartLength });
 
         } else {
-            const wishList =null;
-            res.render("wishList", { wishList,user, CartLength });
+            const wishList = null;
+            res.render("wishList", { wishList, user, CartLength });
 
         }
     } catch (error) {
-       
+
         console.log(error, "error on getWishList")
     }
 
@@ -1692,21 +1692,19 @@ exports.getShop = async (req, res) => {
     try {
         let CartLength = 0;
         const products = await productSchema.find();
-
-
         // Check if user is authenticated
         if (req.user) {
             const userId = req.user.userId;
             const user = await userSchema.findById(userId);
             const cartProducts = await cart.findOne({ userId });
-
             if (cartProducts) {
                 CartLength = cartProducts.cartItems.length;
                 res.render("shopSingle", { user, CartLength, products });
+            }else{
+                CartLength =0;
+                res.render("shopSingle", { user, CartLength, products });
+
             }
-
-
-
         } else {
             // Guest user
             res.render("shopSingle", { CartLength, products, user: null });
