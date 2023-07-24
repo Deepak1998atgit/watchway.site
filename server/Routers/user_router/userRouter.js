@@ -7,8 +7,8 @@ const middleWare=require("../../controllers/user_controller/middleWare");
 
 route.get("/",middleWare.authenticateToken,userController.getHomePage);
 route.get("/userSignIn",middleWare.isLogedIn,userController.getUserSignin);
-route.get("/userSignUp",userController.getUserSignUp);
-route.get("/loginWithOtp",userController.loginWithOtp);
+route.get("/userSignUp",middleWare.isLogedIn,userController.getUserSignUp);
+route.get("/loginWithOtp",middleWare.isLogedIn,userController.loginWithOtp);
 
 
 
